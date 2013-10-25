@@ -30,6 +30,13 @@
                     <input type="hidden" name="isbn" value="${book.isbn13}" />
                     <input type="text" name="quantity" value="1" />
                     <input type="submit" value="Add to cart" />
+                    </div>
+                </form>
+           <div>
+                <form action="addBookToList.do" method="post">
+                    <input type="hidden" name="isbn" value="${book.isbn13}" />
+                    <input type="submit" value="Add to list" />
+                    </div>
                 </form>
             </div>
         </c:otherwise>
