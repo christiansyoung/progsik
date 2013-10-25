@@ -44,9 +44,10 @@ class AddCreditCardAction implements Action {
             }
             
             // Sanitize user input
-            String cardNumber = Jsoup.clean(request.getParameter("creditCardNumber"), Whitelist.none());
-            String cardName = Jsoup.clean(request.getParameter("cardholderName"), Whitelist.none());
-            
+            //String cardNumber = Jsoup.clean(request.getParameter("creditCardNumber"), Whitelist.none());
+            //String cardName = Jsoup.clean(request.getParameter("cardholderName"), Whitelist.none());
+            String cardNumber = request.getParameter("creditCardNumber");
+            String cardName   = request.getParameter("cardholderName");
             CreditCardDAO creditCardDAO = new CreditCardDAO();
             CreditCard creditCard = new CreditCard(
                     customer, 

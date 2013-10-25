@@ -42,8 +42,8 @@ class AddAddressAction implements Action {
             request.setAttribute("messages", messages);
 
             AddressDAO addressDAO = new AddressDAO();
-            String cleanedAddress = Jsoup.clean(request.getParameter("address"), Whitelist.none());
-            Address address = new Address(customer, cleanedAddress);
+            //String cleanedAddress = Jsoup.clean(request.getParameter("address"), Whitelist.none());
+            Address address = new Address(customer, request.getParameter("address"));
 
             if (addressDAO.add(address)) {
                 if (ActionFactory.hasKey(request.getParameter("from"))) {
