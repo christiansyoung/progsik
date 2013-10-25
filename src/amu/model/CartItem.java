@@ -21,7 +21,8 @@ public class CartItem implements Serializable {
     }
 
     public int getQuantity() {
-        return quantity;
+    	int q = Math.abs(quantity);
+        return q;
     }
 
     public void setQuantity(int quantity) {
