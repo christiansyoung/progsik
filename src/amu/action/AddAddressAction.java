@@ -3,13 +3,18 @@ package amu.action;
 import amu.database.AddressDAO;
 import amu.model.Address;
 import amu.model.Customer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 class AddAddressAction implements Action {
 
@@ -37,7 +42,8 @@ class AddAddressAction implements Action {
             request.setAttribute("messages", messages);
 
             AddressDAO addressDAO = new AddressDAO();
-            Address address = new Address(customer, request.getParameter("address"));
+            String cleanedAddress = Jsoup.clean(request.getParameter("address"), Whitelist.none());
+            Address address = new Address(customer, cleanedAddress);
 
             if (addressDAO.add(address)) {
                 if (ActionFactory.hasKey(request.getParameter("from"))) {
