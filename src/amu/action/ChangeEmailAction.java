@@ -2,10 +2,14 @@ package amu.action;
 
 import amu.database.CustomerDAO;
 import amu.model.Customer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,6 +45,21 @@ class ChangeEmailAction implements Action {
 
             // Validation OK, do business logic
             CustomerDAO customerDAO = new CustomerDAO();
+            
+            // Validate email with regex
+            String emailForValidation = email[0];
+            final String EMAIL_PATTERN = 
+            		"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+            		+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+            Pattern pattern  = Pattern.compile(EMAIL_PATTERN);
+            Matcher matcher  = pattern.matcher(emailForValidation);
+            
+            if(!matcher.matches()) {
+            	messages.add("This was not a valid email address");
+            	return new ActionResponse(ActionResponseType.FORWARD, "changeEmail");
+            }
+            
+            
             customer.setEmail(email[0]);
             if (customerDAO.edit(customer) == false) {
                 messages.add("DB update unsuccessful, likely there is already a user with this email address.");
