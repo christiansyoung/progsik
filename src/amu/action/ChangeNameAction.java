@@ -2,11 +2,16 @@ package amu.action;
 
 import amu.database.CustomerDAO;
 import amu.model.Customer;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 class ChangeNameAction implements Action {
 
@@ -25,8 +30,8 @@ class ChangeNameAction implements Action {
 
             Map<String, String> messages = new HashMap<String, String>();
             request.setAttribute("messages", messages);
-
-            customer.setName(request.getParameter("name"));
+            String name = Jsoup.clean(request.getParameter("name"), Whitelist.none());
+            customer.setName(name);
 
             CustomerDAO customerDAO = new CustomerDAO();
             if (customerDAO.edit(customer)) { // Customer name was successfully changed
