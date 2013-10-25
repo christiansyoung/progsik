@@ -25,7 +25,7 @@ class CustomerSupportAction implements Action {
         	
         	String department = sales;
         	
-        	if(request.getParameter("department") == "tech") {
+        	if(request.getParameter("department").equals("tech")) {
         		department = tech;
         	}
         	
