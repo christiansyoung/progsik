@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 <%@page import="java.sql.*"%>
 <%@page import="amu.database.Database"%>
+=======
+>>>>>>> rikard
 <div class="container">
     <h1>Book</h1>
     <c:choose>
@@ -32,6 +35,7 @@
                     <input type="hidden" name="isbn" value="${book.isbn13}" />
                     <input type="text" name="quantity" value="1" />
                     <input type="submit" value="Add to cart" />
+<<<<<<< HEAD
                 </form>
             </div>
             <div>
@@ -80,6 +84,17 @@
     }
     
 %>
+=======
+                    </div>
+                </form>
+           <div>
+                <form action="addBookToList.do" method="post">
+                    <input type="hidden" name="isbn" value="${book.isbn13}" />
+                    <input type="submit" value="Add to list" />
+                    </div>
+                </form>
+            </div>
+>>>>>>> rikard
         </c:otherwise>
     </c:choose>
 </div>

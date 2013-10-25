@@ -1,5 +1,8 @@
 package amu.action;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import amu.Mailer;
 import amu.database.CustomerDAO;
 import amu.model.Customer;
@@ -19,6 +22,8 @@ class RegisterCustomerAction extends HttpServlet implements Action {
 
             if (customer == null) {
                 customer = new Customer();
+                if(!verifyEmail(request.getParameter("email")))
+                        return new ActionResponse(ActionResponseType.REDIRECT, "registrationEmailError"); //Burde kanskje lage en ny.
                 customer.setEmail(request.getParameter("email"));
                 customer.setName(request.getParameter("name"));
                 customer.setPassword(CustomerDAO.hashPassword(request.getParameter("password")));
@@ -29,7 +34,7 @@ class RegisterCustomerAction extends HttpServlet implements Action {
                 actionResponse.addParameter("email", customer.getEmail());
                 
                 StringBuilder sb = new StringBuilder();
-                sb.append("Welcome to Amu-Darya, the really insecure bookstore!\n\n");
+                sb.append("Welcome to Amu-Darya, the stupidly secure bookstore!\n\n");
                 sb.append("To activate your account, click <a href='http://");
                 sb.append(request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/");
                 sb.append(actionResponse.getURL() + actionResponse.getParameterString());
@@ -46,5 +51,15 @@ class RegisterCustomerAction extends HttpServlet implements Action {
         
         // Else we show the register form
         return new ActionResponse(ActionResponseType.FORWARD, "registerCustomer");
+    }
+    // Check to see if the string is a valid email-adress.
+    private boolean verifyEmail(String param) {
+        if(param == null)
+            return false;
+        String emailPattern = "[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+
+                              "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        Pattern pattern = Pattern.compile(emailPattern);
+        Matcher matcher = pattern.matcher(param);
+        return matcher.matches();
     }
 }
