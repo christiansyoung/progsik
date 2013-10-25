@@ -7,8 +7,8 @@
                     <td>Choose department:</td>
                     <td>
                         <select name="department">
-                            <option selected value="tdt4237.amu.darya@gmail.com">Sales</option>
-                            <option value="tdt4237.amu.darya@gmail.com">Technical support</option>
+                            <option selected value="sales">Sales</option>
+                            <option value="tech">Technical support</option>
                         </select>
                     </td>
                 </tr>
