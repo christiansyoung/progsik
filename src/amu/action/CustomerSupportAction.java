@@ -20,7 +20,16 @@ class CustomerSupportAction implements Action {
         }
 
         if (request.getMethod().equals("POST")) {
-            Mailer.send(request.getParameter("department"), 
+        	final String sales = "tdt4237.amu.darya@gmail.com";
+        	final String tech  = "tdt4237.amu.darya@gmail.com";
+        	
+        	String department = sales;
+        	
+        	if(request.getParameter("department") == "tech") {
+        		department = tech;
+        	}
+        	
+            Mailer.send(department, 
                     request.getParameter("subject"), 
                     request.getParameter("content"), 
                     request.getParameter("fromAddr"), 
