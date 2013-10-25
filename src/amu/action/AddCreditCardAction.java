@@ -3,15 +3,20 @@ package amu.action;
 import amu.database.CreditCardDAO;
 import amu.model.CreditCard;
 import amu.model.Customer;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 class AddCreditCardAction implements Action {
     
@@ -31,20 +36,29 @@ class AddCreditCardAction implements Action {
             request.setAttribute("messages", messages);
             
             Calendar expiryDate = Calendar.getInstance();
-            expiryDate.set(Integer.parseInt(request.getParameter("expiryYear")), Integer.parseInt(request.getParameter("expiryMonth")), 1);
+            try {
+            	expiryDate.set(Integer.parseInt(request.getParameter("expiryYear")), Integer.parseInt(request.getParameter("expiryMonth")), 1);
+            }
+            catch(Exception e) {
+            	messages.put("error", "Could not parse dates.");
+            }
+            
+            // Sanitize user input
+            String cardNumber = Jsoup.clean(request.getParameter("creditCardNumber"), Whitelist.none());
+            String cardName = Jsoup.clean(request.getParameter("cardholderName"), Whitelist.none());
             
             CreditCardDAO creditCardDAO = new CreditCardDAO();
             CreditCard creditCard = new CreditCard(
                     customer, 
-                    request.getParameter("creditCardNumber"), 
+                    cardNumber, 
                     expiryDate,
-                    request.getParameter("cardholderName"));
+                    cardName);
 
             Map<String, String> values = new HashMap<String, String>();
             request.setAttribute("values", values);
-            values.put("creditCardNumber", request.getParameter("creditCardNumber"));
-            values.put("expiryDate", request.getParameter("expiry"));
-            values.put("cardholderName", request.getParameter("cardholderName"));
+            values.put("creditCardNumber", cardNumber);
+            values.put("expiryDate", expiryDate.toString());
+            values.put("cardholderName", cardName);
             
             if (creditCardDAO.add(creditCard)) {
                 return new ActionResponse(ActionResponseType.REDIRECT, "viewCustomer");
