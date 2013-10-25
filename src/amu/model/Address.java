@@ -3,6 +3,7 @@ package amu.model;
 public class Address {
     
 	//This is a comment
+	// THIS IS ANOTHER COMMENT
 	
     private Integer id;
     private Customer customer;
