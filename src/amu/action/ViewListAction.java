@@ -2,6 +2,8 @@ package amu.action;
 
 import amu.model.BookList;
 import amu.model.Cart;
+import amu.model.Customer;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -16,9 +18,11 @@ class ViewListAction implements Action {
         HttpSession session = request.getSession();
         BookList list = (BookList) session.getAttribute("bookList");
         
+        Customer c = (Customer)session.getAttribute("customer");
+        
         if (list == null)
         {
-            list = new BookList();
+            list = new BookList(c);
             session.setAttribute("list", list);
         }
         
