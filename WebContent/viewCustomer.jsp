@@ -1,10 +1,15 @@
 <div class="container">
+    <div>To log out, remember to close the window</div>
     <h1>Customer options</h1>
     <div>Hello, ${customer.name}</div>
+    
+    
     <div>
         <div><a href="changeName.do">Change name</a></div>
         <div><a href="changeEmail.do">Change email</a></div>
         <div><a href="changePassword.do">Change password</a></div>
+        <div><a href="viewList.do">View lists</a></div>
+        
     </div>
     <div>
         <h2>Payment settings</h2>

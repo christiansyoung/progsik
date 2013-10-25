@@ -22,7 +22,7 @@ class ViewListAction implements Action {
             session.setAttribute("list", list);
         }
         
-        return new ActionResponse(ActionResponseType.FORWARD, "viewBookList");
+        return new ActionResponse(ActionResponseType.FORWARD, "viewBookList"); //This is the url in which one should be forwarded to
     }
     
 }
