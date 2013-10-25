@@ -29,6 +29,22 @@ class ChangePasswordAction implements Action {
         }
 
         if (request.getMethod().equals("POST")) {
+        	if (request.getMethod().equals("POST")) {
+            	String request_csrf_token = request.getParameter("csrf_token");
+            	if ( (request_csrf_token == null) || ("".equals(request_csrf_token)) ) {
+            		ActionResponse actionResponse = new ActionResponse(ActionResponseType.REDIRECT, "loginCustomer");
+                    actionResponse.addParameter("from", "changePassword");
+                    return actionResponse;
+            	}
+            	
+            	String csrf_token = (String) session.getAttribute("csrf_token");
+            	if (!request_csrf_token.equals(csrf_token)) {
+            		ActionResponse actionResponse = new ActionResponse(ActionResponseType.REDIRECT, "loginCustomer");
+                    actionResponse.addParameter("from", "changePassword");
+                    return actionResponse;
+            	}
+            	session.setAttribute("csrf_token", UUID.randomUUID().toString());
+        	
             List<String> messages = new ArrayList<String>();
             request.setAttribute("messages", messages);
 

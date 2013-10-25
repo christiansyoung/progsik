@@ -4,6 +4,7 @@ import amu.database.CustomerDAO;
 import amu.model.Customer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,7 @@ class LoginCustomerAction implements Action {
                     if (customer.getPassword().equals(CustomerDAO.hashPassword(request.getParameter("password")))) {
                         HttpSession session = request.getSession(true);
                         session.setAttribute("customer", customer);
+                        session.setAttribute("csrf_token", UUID.randomUUID().toString());
                         if (ActionFactory.hasKey(request.getParameter("from"))) {
                             return new ActionResponse(ActionResponseType.REDIRECT, request.getParameter("from"));
                         }

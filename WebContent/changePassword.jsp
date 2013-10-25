@@ -23,6 +23,7 @@
             <td><input id="password" name="password" type="password" value="${values.password[2]}" /></td>
         </tr>
         </table>
+        <input type="hidden" name="csrf_token" value="${csrf_token}" />
         <div><input type="submit" value="Submit" /></div>
     </form>
     </div>
