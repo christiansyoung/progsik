@@ -30,8 +30,8 @@ class ChangeNameAction implements Action {
 
             Map<String, String> messages = new HashMap<String, String>();
             request.setAttribute("messages", messages);
-            String name = Jsoup.clean(request.getParameter("name"), Whitelist.none());
-            customer.setName(name);
+            //String name = Jsoup.clean(request.getParameter("name"), Whitelist.none());
+            customer.setName(request.getParameter("name"));
 
             CustomerDAO customerDAO = new CustomerDAO();
             if (customerDAO.edit(customer)) { // Customer name was successfully changed
