@@ -1,5 +1,6 @@
 package amu.action;
 
+import amu.model.BookList;
 import amu.model.Cart;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,15 +14,15 @@ class ViewListAction implements Action {
     @Override
     public ActionResponse execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute("cart");
+        BookList list = (BookList) session.getAttribute("bookList");
         
-        if (cart == null)
+        if (list == null)
         {
-            cart = new Cart();
-            session.setAttribute("cart", cart);
+            list = new BookList();
+            session.setAttribute("list", list);
         }
         
-        return new ActionResponse(ActionResponseType.FORWARD, "viewCart");
+        return new ActionResponse(ActionResponseType.FORWARD, "viewBookList");
     }
     
 }
