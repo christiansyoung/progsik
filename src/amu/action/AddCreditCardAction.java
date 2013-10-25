@@ -31,7 +31,12 @@ class AddCreditCardAction implements Action {
             request.setAttribute("messages", messages);
             
             Calendar expiryDate = Calendar.getInstance();
-            expiryDate.set(Integer.parseInt(request.getParameter("expiryYear")), Integer.parseInt(request.getParameter("expiryMonth")), 1);
+            try {
+            	expiryDate.set(Integer.parseInt(request.getParameter("expiryYear")), Integer.parseInt(request.getParameter("expiryMonth")), 1);
+            }
+            catch(Exception e) {
+            	messages.put("error", "Could not parse dates.");
+            }
             
             CreditCardDAO creditCardDAO = new CreditCardDAO();
             CreditCard creditCard = new CreditCard(
