@@ -47,8 +47,9 @@ class LoginCustomerAction implements Action {
 
             // Forward to login form with error messages
             return new ActionResponse(ActionResponseType.FORWARD, "loginCustomer");
-        }
 
+            }
+        }
         return new ActionResponse(ActionResponseType.FORWARD, "loginCustomer");
     }
 }
