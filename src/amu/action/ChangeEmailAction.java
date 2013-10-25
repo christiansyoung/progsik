@@ -24,6 +24,21 @@ class ChangeEmailAction implements Action {
         }
 
         if (request.getMethod().equals("POST")) {
+        	String request_csrf_token = request.getParameter("csrf_token");
+        	if ( (request_csrf_token == null) || ("".equals(request_csrf_token)) ) {
+        		ActionResponse actionResponse = new ActionResponse(ActionResponseType.REDIRECT, "loginCustomer");
+                actionResponse.addParameter("from", "changeEmail");
+                return actionResponse;
+        	}
+        	
+        	String csrf_token = (String) session.getAttribute("csrf_token");
+        	if (!request_csrf_token.equals(csrf_token)) {
+        		ActionResponse actionResponse = new ActionResponse(ActionResponseType.REDIRECT, "loginCustomer");
+                actionResponse.addParameter("from", "changeEmail");
+                return actionResponse;
+        	}		
+        	session.setAttribute("csrf_token", UUID.randomUUID().toString());
+        	
             Map<String, String[]> values = new HashMap<String, String[]>();
             request.setAttribute("values", values);
 

@@ -18,6 +18,7 @@
                 </tr>
             </table>
             <div> <textarea name="content" rows="10" cols="40"></textarea></div>
+            <input type="hidden" name="csrf_token" value="${csrf_token}" />
             <div> <input type="submit" value="Send" /></div>
         </form>
     </div>

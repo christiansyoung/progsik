@@ -18,6 +18,7 @@
             <td><input id="email" name="email" type="text" value="${values.email[1]}" /></td>
         </tr>
         </table>
+        <input type="hidden" name="csrf_token" value="${csrf_token}" />
         <div><input type="submit" value="Submit" /></div>
     </form>
     </div>
