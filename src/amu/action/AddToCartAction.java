@@ -13,7 +13,7 @@ class AddToCartAction implements Action {
     @Override
     public ActionResponse execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        
+        int quantity = 0;
         Cart cart = (Cart) session.getAttribute("cart");
         
         if (cart == null)
@@ -22,12 +22,16 @@ class AddToCartAction implements Action {
             session.setAttribute("cart", cart);
         }
         
-        if (request.getParameter("isbn") != null && request.getParameter("quantity") != null)
+        try {
+        	quantity = Math.abs(Integer.parseInt(request.getParameter("quantity")));
+        } catch (Exception e) { }
+        
+        if (request.getParameter("isbn") != null && quantity != 0)
         {
             BookDAO bookDAO = new BookDAO();
             Book book = bookDAO.findByISBN(request.getParameter("isbn"));
             
-            cart.addItem(new CartItem(book, Integer.parseInt(request.getParameter("quantity"))));
+            cart.addItem(new CartItem(book, quantity));
         }
 
         return new ActionResponse(ActionResponseType.REDIRECT, "viewCart");

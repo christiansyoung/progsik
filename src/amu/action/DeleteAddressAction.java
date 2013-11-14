@@ -1,10 +1,14 @@
 package amu.action;
 
 import amu.database.AddressDAO;
+import amu.database.CustomerDAO;
 import amu.model.Address;
 import amu.model.Customer;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,22 +27,40 @@ class DeleteAddressAction implements Action {
         }
 
         AddressDAO addressDAO = new AddressDAO();
-        Address address;
+        List<Address> addresses = addressDAO.browse(customer);
+        int addressId = Integer.parseInt(request.getParameter("id"));
+        List<String> messages = new ArrayList<String>();
+        request.setAttribute("messages", messages);
 
-        if (request.getMethod().equals("POST")) {
-            List<String> messages = new ArrayList<String>();
-            request.setAttribute("messages", messages);
+        Iterator<Address> iterator = addresses.iterator();
+        while (iterator.hasNext()) {
+        	Address address = iterator.next();
+        	if (address.getId() == addressId) { // the address is owned by the customer
+        		if (request.getMethod().equals("POST")) {
+        			String nonce = request.getParameter("nonce");
+                    if (nonce == null || nonce.trim().equals("") || !nonce.equals(session.getAttribute("nonce"))) {
+                    	messages.add("Something went wrong, please try again.");
+                    	return new ActionResponse(ActionResponseType.FORWARD, "deleteAddress");
+                    }
 
-            if (addressDAO.delete(Integer.parseInt(request.getParameter("id")))) {
-                return new ActionResponse(ActionResponseType.REDIRECT, "viewCustomer");
-            }
+        			if (addressDAO.delete(addressId)) {
+        				session.removeAttribute("nonce");
+        				return new ActionResponse(ActionResponseType.REDIRECT, "viewCustomer");
+        			}
+        		} else { // (request.getMethod().equals("GET")) 
+        			request.setAttribute("address", address);
 
-            messages.add("An error occured."); 
+        	        // add a nonce to the session and the form
+        	        String nonce = CustomerDAO.generateSalt();
+        	        request.setAttribute("nonce", nonce);
+        			session.setAttribute("nonce", nonce);
+        	        
+        			return new ActionResponse(ActionResponseType.FORWARD, "deleteAddress");
+        		}
+        			
+        	}
         }
-
-        // (request.getMethod().equals("GET")) 
-        address = addressDAO.read(Integer.parseInt(request.getParameter("id"))); 
-        request.setAttribute("address", address);
+        messages.add("An error occured."); 
         return new ActionResponse(ActionResponseType.FORWARD, "deleteAddress");
     }
 }

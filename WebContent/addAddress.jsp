@@ -1,20 +1,23 @@
-<div class="container">
-<h1>Add Address</h1>
-    <form action="addAddress.do" method="post">
-        <c:if test="${not empty messages}">
-            <c:forEach var="message" items="${messages}">
-                <div>
-                    <span class="error">${message}</span>
-                </div>
-            </c:forEach>
-        </c:if>
-        <c:if test="${not empty values.from}">
-            <input type="hidden" name="from" value="${values.from}">
-        </c:if>
-        <div>
-            <div><label for="address">Add address: </label></div>
-            <textarea id="address" name="address" rows="5" cols="20">${address.address}</textarea>
-        </div>
-        <div><input type="submit" value="Submit" /></div>
-    </form>
+<div class="row">
+	<div class="col-lg-4"></div>
+	<div class="col-lg-4">
+		<h1>Add address</h1>
+		<c:if test="${not empty messages}">
+			<c:forEach var="message" items="${messages}">
+				<div class="alert alert-danger">${message}</div>
+			</c:forEach>
+		</c:if>
+		<form action="addAddress.do" method="post">
+			<input type="hidden" name="nonce" value="${nonce}">
+			<textarea id="address" name="address" rows="5" cols="40"
+				class="form-control" autofocus><c:out
+					value="${address.address}" /></textarea>
+			&nbsp;
+			<p>
+				<button class="btn btn-lg btn-success" type="submit">Add</button>
+				<a class="btn btn-lg btn-primary"
+					href="<c:url value="/viewCustomer.do" />">No, take me back</a>
+			</p>
+		</form>
+	</div>
 </div>

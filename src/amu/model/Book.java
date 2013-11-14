@@ -1,6 +1,7 @@
 package amu.model;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 
 public class Book implements Serializable {
@@ -15,6 +16,7 @@ public class Book implements Serializable {
     private String isbn13;
     private String description;
     private float price; 
+    private List<Review> reviews;
 
     public int getId() {
         return id;
@@ -102,5 +104,32 @@ public class Book implements Serializable {
 
     public void setEdition(int edition) {
         this.edition = edition;
+    }
+    
+    public List<Review> getReviews() {
+    	return reviews;
+    }
+    
+    public void setReviews(List<Review> reviews) {
+    	this.reviews = reviews;
+    }
+    
+    public void addReview(Review review) {
+    	this.reviews.add(review);
+    }
+    
+    public int getRating() {
+    	int rating = 0;
+    	Iterator<Review> iterator = reviews.iterator();
+    	int count = 0;
+    	while (iterator.hasNext()) {
+    		Review review = iterator.next();
+    		rating += review.getRating();
+    		count++;
+    	}
+    	if (count != 0) {
+    		rating = Math.round(rating / count);
+    	}
+    	return rating;
     }
 }

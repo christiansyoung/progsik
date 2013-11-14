@@ -4,6 +4,7 @@ import amu.database.AddressDAO;
 import amu.model.Address;
 import amu.model.Cart;
 import amu.model.Customer;
+import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,15 +30,24 @@ class SelectShippingAddressAction implements Action {
         }
 
         AddressDAO addressDAO = new AddressDAO();
-        
-        // Handle shipping address selection submission
-        if (request.getParameter("id") != null) {
-            cart.setShippingAddress(addressDAO.read(Integer.parseInt(request.getParameter("id"))));
-            return new ActionResponse(ActionResponseType.REDIRECT, "selectPaymentOption");
-        }
-        
         List<Address> addresses = addressDAO.browse(customer);
         request.setAttribute("addresses", addresses);
+        
+        // Handle shipping address selection submission
+        String id = request.getParameter("id");
+        if (id != null) {
+        	try {
+	        	int addrid = Integer.parseInt(id);
+	            Iterator<Address> iterator = addresses.iterator();
+	            while (iterator.hasNext()) {
+	            	Address address = iterator.next();
+	            	if (address.getId() == addrid) {
+	            		cart.setShippingAddress(addressDAO.read(addrid));
+	            		return new ActionResponse(ActionResponseType.REDIRECT, "selectPaymentOption");
+	            	}
+	            }
+        	} catch(Exception e) {}
+        }
 
         // Else GET request
         return new ActionResponse(ActionResponseType.FORWARD, "selectShippingAddress");

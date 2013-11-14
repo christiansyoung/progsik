@@ -1,13 +1,17 @@
 package amu.action;
 
 import amu.database.AddressDAO;
+import amu.database.BookListDAO;
 import amu.database.CreditCardDAO;
 import amu.database.OrderDAO;
 import amu.model.Address;
+import amu.model.BookList;
 import amu.model.CreditCard;
 import amu.model.Customer;
 import amu.model.Order;
+
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,7 +39,12 @@ class ViewCustomerAction implements Action {
             
             OrderDAO orderDAO = new OrderDAO();
             List<Order> orders = orderDAO.browse(customer);
+
             request.setAttribute("orders", orders);
+            
+            BookListDAO listDAO = new BookListDAO();
+            List<BookList> lists = listDAO.findByCustomer(customer);
+            request.setAttribute("lists", lists);
 
             return new ActionResponse(ActionResponseType.FORWARD, "viewCustomer");
         }

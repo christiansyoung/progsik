@@ -1,22 +1,35 @@
-<div class="container">
-    <h1>Select Payment Option</h1>
-    <div>
-        Select a credit card amongst the following, or <a href="addCreditCard.do?from=selectPaymentOption">add a new card</a>.
-    </div>
-    <form method="post" action="selectPaymentOption.do">
-        <c:forEach var="creditCard" items="${creditCards}" varStatus="counter">
-            <div>
-                <input type="radio" name="creditCardID" value="${creditCard.id}" />
-                <span>Credit card #${counter.count}</span><br />
-                <div>Credit card number: ${creditCard.maskedCreditCardNumber}</div>
-                <div>Expiry date: <fmt:formatDate value="${creditCard.expiryDate.time}" type="date" dateStyle="short" /></div>
-                <div>Cardholder's name: ${creditCard.cardholderName}</div>
-            </div>
-            <div>
-                <label for="cardSecurityCode">Card security code: </label>
-                <input id="cardSecurityCode" name="cardSecurityCode" type="text" />
-            </div>
-            <input type="submit" value="Select credit card" /> 
-        </c:forEach>
-    </form>
+<div class="row">
+	<div class="col-lg-4"></div>
+	<div class="col-lg-4">
+		<h2>Select payment option</h2>
+		<div>
+			Select a credit card amongst the following, or <a
+				href="addCreditCard.do?from=selectPaymentOption">add a new card</a>.
+		</div>
+		<form method="post" action="selectPaymentOption.do">
+			<input type="hidden" name="nonce" value="${nonce}">
+			<c:forEach var="creditCard" items="${creditCards}" varStatus="counter">
+				<h4>
+					<span class="label label-default">Credit card <span class="badge">${counter.count}</span></span>
+				</h4>
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input type="radio" name="creditCardID" value="${creditCard.id}" />
+					</span>
+					<span class="form-control well well-sm">${creditCard.maskedCreditCardNumber}</span>
+					<span class="input-group-addon">Card no.</span>
+				</div>&nbsp;
+				<div class="input-group">
+					<span class="input-group-addon">CSC</span>
+					<input class="form-control" id="cardSecurityCode" name="cardSecurityCode" type="text"
+						placeholder="Card Security Code" />
+					<a class="input-group-addon" href="http://en.wikipedia.org/wiki/Card_security_code">What's this?</a>
+				</div>&nbsp;
+				<p>Cardholder's name: <c:out value="${creditCard.cardholderName}" /><br />
+				 Expiration date: <fmt:formatDate value="${creditCard.expiryDate.time}" type="date" dateStyle="short" /></p>
+			</c:forEach>
+			<br />
+			<button type="submit" class="btn btn-success">Use selected card</button>
+		</form>
+	</div>
 </div>

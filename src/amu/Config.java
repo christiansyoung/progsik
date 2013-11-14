@@ -1,5 +1,8 @@
 package amu;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Config {
     public final static String JDBC_RESOURCE = "jdbc/bookstore";
     
@@ -10,6 +13,8 @@ public class Config {
     
     public final static String EMAIL_FROM_ADDR = "tdt4237.amu.darya@gmail.com";
     public final static String EMAIL_FROM_NAME = "Amu-Darya";
-    
-    public final static String SALT="NaCl"; // Changing this will invalidate all customer passwords in DB
+    public final static Map<String, String> SUPPORT_ADDRESSES = new HashMap<String, String>() {{
+    	put("Sales", "tdt4237.amu.darya@gmail.com");
+    	put("Technical", "tdt4237.amu.darya@gmail.com");
+    }};
 }

@@ -1,10 +1,14 @@
 package amu.action;
 
 import amu.database.CreditCardDAO;
+import amu.database.CustomerDAO;
 import amu.model.CreditCard;
 import amu.model.Customer;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,22 +27,40 @@ class DeleteCreditCardAction implements Action {
         }
 
         CreditCardDAO creditCardDAO = new CreditCardDAO();
-        CreditCard creditCard;
+        List<CreditCard> creditCards = creditCardDAO.browse(customer);        
+        int cardId = Integer.parseInt(request.getParameter("id"));
+        List<String> messages = new ArrayList<String>();
+        request.setAttribute("messages", messages);
 
-        if (request.getMethod().equals("POST")) {
-            List<String> messages = new ArrayList<String>();
-            request.setAttribute("messages", messages);
+        Iterator<CreditCard> iterator = creditCards.iterator();
+        while (iterator.hasNext()) {
+        	CreditCard card = iterator.next();
+        	if (card.getId() == cardId) { // the card is owned by the customer
+        		if (request.getMethod().equals("POST")) {
+        			String nonce = request.getParameter("nonce");
+                    if (nonce == null || nonce.trim().equals("") || !nonce.equals(session.getAttribute("nonce"))) {
+                    	messages.add("Something went wrong, please try again.");
+                    	return new ActionResponse(ActionResponseType.FORWARD, "deleteCreditCard");
+                    }
 
-            if (creditCardDAO.delete(Integer.parseInt(request.getParameter("id")))) {
-                return new ActionResponse(ActionResponseType.REDIRECT, "viewCustomer");
-            }
+                    if (creditCardDAO.delete(cardId)) {
+                    	// card deleted successfully
+                    	session.removeAttribute("nonce");
+            			return new ActionResponse(ActionResponseType.REDIRECT, "viewCustomer");
+            		}
+        		} else { // (request.getMethod().equals("GET")) 
+        			request.setAttribute("creditCard", card);
 
-            messages.add("An error occured.");
+        	        // add a nonce to the session and the form
+        	        String nonce = CustomerDAO.generateSalt();
+        	        request.setAttribute("nonce", nonce);
+        			session.setAttribute("nonce", nonce);
+
+        			return new ActionResponse(ActionResponseType.FORWARD, "deleteCreditCard");
+        		}
+        	}
         }
-
-        // (request.getMethod().equals("GET")) 
-        creditCard = creditCardDAO.read(Integer.parseInt(request.getParameter("id")));
-        request.setAttribute("creditCard", creditCard);
+        messages.add("An error occured.");
         return new ActionResponse(ActionResponseType.FORWARD, "deleteCreditCard");
     }
     

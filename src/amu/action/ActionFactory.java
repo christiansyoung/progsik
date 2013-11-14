@@ -22,6 +22,11 @@ public class ActionFactory implements ServletContextListener {
         // Book actions
         map.put("bookNotFound", new ForwardAction("bookNotFound"));
         map.put("viewBook", new ViewBookAction());
+        map.put("listBooks", new ListBooksAction());
+        map.put("reviewBook", new ReviewBookAction());
+        map.put("reviewBookError", new ForwardAction("reviewBookError"));
+        map.put("reviewBookSuccessful", new ForwardAction("reviewBookSuccessful"));
+        map.put("voteReview", new VoteReviewAction());
         
         // Cart actions
         map.put("addBookToCart", new AddToCartAction());
@@ -52,18 +57,34 @@ public class ActionFactory implements ServletContextListener {
         map.put("changePassword", new ChangePasswordAction());
         map.put("changeEmail", new ChangeEmailAction());
         map.put("changeName", new ChangeNameAction());
+        map.put("logoutCustomer", new LogoutCustomerAction());
         
         // Customer support
         map.put("customerSupport", new CustomerSupportAction());
         map.put("customerSupportSuccessful", new ForwardAction("customerSupportSuccessful"));
 
+        // List actions
+        map.put("addList", new AddListAction());
+        map.put("editList", new EditListAction());
+        map.put("deleteList", new DeleteListAction());
+        map.put("viewList", new ViewListAction());
+        map.put("addBookToList", new AddBookToListAction());
+        map.put("showLists", new ShowListsAction());
+
+        // Order management
+        map.put("editOrder", new EditOrderAction());
+        map.put("cancelOrder", new CancelOrderAction());
+        
         return Collections.unmodifiableMap(map);
     }
 
     public static Action getAction(HttpServletRequest request) {
-        // Strip leading '/' and trailing '.do'
-        String key = request.getServletPath().substring(1,request.getServletPath().length()-3);
-        return actions.get(key);
+        return actions.get(ActionFactory.getActionName(request));
+    }
+    
+    public static String getActionName(HttpServletRequest request) {
+    	// Strip leading '/' and trailing '.do'
+        return request.getServletPath().substring(1,request.getServletPath().length()-3);
     }
     
     public static boolean hasKey(String key) {

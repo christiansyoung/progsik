@@ -5,6 +5,8 @@ import amu.model.Publisher;
 import amu.model.Title;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.*;
 
 public class BookDAO {
@@ -12,23 +14,23 @@ public class BookDAO {
         Book book = null;
         
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
         
         try {
             connection = Database.getConnection();
-            statement = connection.createStatement();
             
-            String query = "SELECT * FROM book, publisher, title "
-                    + "WHERE book.isbn13 = '"
-                    + isbn + "' "
-                    + "AND book.title_id = title.id "
-                    + "AND book.publisher_id = publisher.id;";
-            resultSet = statement.executeQuery(query);
+			String query = "SELECT * FROM book, publisher, title " +
+						   "WHERE book.isbn13=? AND book.title_id = title.id " +
+						   "AND book.publisher_id = publisher.id;";
+			statement = connection.prepareStatement(query);
+			statement.setString(1, isbn);
+            resultSet = statement.executeQuery();
             Logger.getLogger(this.getClass().getName()).log(Level.FINE, "findByISBN SQL Query: " + query);
-            
+
             if (resultSet.next()) {
                 AuthorDAO authorDAO = new AuthorDAO(); // TODO:
+                ReviewDAO reviewDAO = new ReviewDAO();
                 
                 book = new Book();
                 book.setId(resultSet.getInt("book.id"));
@@ -42,6 +44,7 @@ public class BookDAO {
                 book.setDescription(resultSet.getString("book.description"));
                 book.setAuthor(authorDAO.findByBookID(resultSet.getInt("book.id")));
                 book.setPrice(resultSet.getFloat("book.price"));
+                book.setReviews(reviewDAO.findByBookID(resultSet.getInt("book.id")));
                 // TODO: Reviews, Categories
             }
         } catch (SQLException exception) {
@@ -51,5 +54,49 @@ public class BookDAO {
         }
         
         return book;
+    }
+    
+    public List<Book> findAll() {
+    	List<Book> books = new ArrayList<Book>();
+    	
+    	Connection connection = null;
+    	Statement statement = null;
+    	ResultSet resultSet = null;
+    	
+    	try {
+            connection = Database.getConnection();
+            statement = connection.createStatement();
+            
+            String query = "SELECT * FROM book, publisher, title "
+                    + "WHERE book.title_id = title.id AND book.publisher_id = publisher.id;";
+            resultSet = statement.executeQuery(query);
+            Logger.getLogger(this.getClass().getName()).log(Level.FINE, "findAll SQL Query: " + query);
+            
+            while (resultSet.next()) {
+            	AuthorDAO authorDAO = new AuthorDAO(); // TODO:
+
+            	Book book = new Book();
+                book.setId(resultSet.getInt("book.id"));
+                book.setTitle(new Title(resultSet.getInt("title.id"), resultSet.getString("title.name")));
+                book.setPublisher(new Publisher(resultSet.getInt("publisher.id"), resultSet.getString("publisher.name")));
+                book.setPublished(resultSet.getString("book.published"));
+                book.setEdition(resultSet.getInt("book.edition"));
+                book.setBinding(resultSet.getString("book.binding"));
+                book.setIsbn10(resultSet.getString("book.isbn10"));
+                book.setIsbn13(resultSet.getString("book.isbn13"));
+                book.setDescription(resultSet.getString("book.description"));
+                book.setAuthor(authorDAO.findByBookID(resultSet.getInt("book.id")));
+                book.setPrice(resultSet.getFloat("book.price"));
+
+                books.add(book);
+                // TODO: Reviews, Categories
+            }
+        } catch (SQLException exception) {
+            Logger.getLogger(this.getClass().getName()).log(Level.INFO, null, exception);
+        } finally {
+            Database.close(connection, statement, resultSet);
+        }
+    	
+    	return books;
     }
 }

@@ -1,14 +1,17 @@
 package amu.action;
 
 import amu.database.CreditCardDAO;
+import amu.database.CustomerDAO;
 import amu.model.CreditCard;
 import amu.model.Customer;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,6 +33,12 @@ class AddCreditCardAction implements Action {
             Map<String, String> messages = new HashMap<String, String>();
             request.setAttribute("messages", messages);
             
+            String nonce = request.getParameter("nonce");
+            if (nonce == null || nonce.trim().equals("") || !nonce.equals(session.getAttribute("nonce"))) {
+            	messages.put("error", "Something went wrong, please try again.");
+            	return new ActionResponse(ActionResponseType.FORWARD, "addCreditCard");
+            }
+            
             Calendar expiryDate = Calendar.getInstance();
             expiryDate.set(Integer.parseInt(request.getParameter("expiryYear")), Integer.parseInt(request.getParameter("expiryMonth")), 1);
             
@@ -47,6 +56,7 @@ class AddCreditCardAction implements Action {
             values.put("cardholderName", request.getParameter("cardholderName"));
             
             if (creditCardDAO.add(creditCard)) {
+            	session.removeAttribute("nonce");
                 return new ActionResponse(ActionResponseType.REDIRECT, "viewCustomer");
             }
             
@@ -62,11 +72,16 @@ class AddCreditCardAction implements Action {
             years.add(Integer.valueOf(calendar.get(Calendar.YEAR) + offset).toString());
         }
 
-        Map<String, String> months = new HashMap<String, String>();
+        List<Integer> months = new ArrayList<Integer>();
         request.setAttribute("months", months);
         for (Integer month = 0; month < 12; month++) {
-            months.put(month.toString(), Integer.valueOf(month - 1).toString());
+        	months.add(month);
         }
+        
+        // add a nonce to the session and the form
+        String nonce = CustomerDAO.generateSalt();
+        request.setAttribute("nonce", nonce);
+		session.setAttribute("nonce", nonce);
         
         return new ActionResponse(ActionResponseType.FORWARD, "addCreditCard");
     }

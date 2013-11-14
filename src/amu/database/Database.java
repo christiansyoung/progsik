@@ -25,6 +25,8 @@ public final class Database {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, "Getting DataSource failed.", exception);
         } catch (SQLException exception) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, "Opening Connection failed.", exception);
+        } catch (Exception exception) {
+        	Logger.getLogger(Database.class.getName()).log(Level.SEVERE, "Opening Connection failed.", exception);
         }
         
         return connection;

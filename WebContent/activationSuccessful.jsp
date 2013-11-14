@@ -1,5 +1,5 @@
-<div class="container">
-    <h1>Activation Successful</h1>
-    <div class = "index-item"><a href="viewCustomer.do">View profile</a></div>
-    <div class = "index-item"><a href="<c:url value="/" />">Go back to front page</a></div>
+<div class="jumbotron">
+	<h1>Activation successful!</h1>
+	<p class="lead">Your account is now successfully activated. You can now start buying books!</p>
+		<a class="btn btn-lg btn-warning" href="<c:url value='/listBooks.do' />">View books</a>
 </div>

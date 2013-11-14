@@ -1,12 +1,15 @@
 package amu.action;
 
 import amu.database.AddressDAO;
+import amu.database.CustomerDAO;
 import amu.model.Address;
 import amu.model.Customer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,11 +38,18 @@ class AddAddressAction implements Action {
         if (request.getMethod().equals("POST")) {
             List<String> messages = new ArrayList<String>();
             request.setAttribute("messages", messages);
+            
+            String nonce = request.getParameter("nonce");
+            if (nonce == null || nonce.trim().equals("") || !nonce.equals(session.getAttribute("nonce"))) {
+            	messages.add("Something went wrong, please try again.");
+            	return new ActionResponse(ActionResponseType.FORWARD, "addAddress");
+            }
 
             AddressDAO addressDAO = new AddressDAO();
             Address address = new Address(customer, request.getParameter("address"));
 
             if (addressDAO.add(address)) {
+            	session.removeAttribute("nonce");
                 if (ActionFactory.hasKey(request.getParameter("from"))) {
                     return new ActionResponse(ActionResponseType.REDIRECT, request.getParameter("from"));
                 } else {
@@ -51,6 +61,11 @@ class AddAddressAction implements Action {
             messages.add("An error occured.");
             request.setAttribute("address", address);
         }
+        
+        // add a nonce to the session and the form
+        String nonce = CustomerDAO.generateSalt();
+        request.setAttribute("nonce", nonce);
+		session.setAttribute("nonce", nonce);
 
         // (request.getMethod().equals("GET")) 
         return new ActionResponse(ActionResponseType.FORWARD, "addAddress");

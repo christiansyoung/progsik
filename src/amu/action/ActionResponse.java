@@ -14,6 +14,7 @@ public class ActionResponse {
     private final ActionResponseType type;
     private final String url;
     private Map<String, String> parameters;
+    private String query;
 
     public ActionResponse(ActionResponseType type, String url) {
         this.type = type;
@@ -45,7 +46,9 @@ public class ActionResponse {
     
     public String getParameterString() {
 
-        if (parameters == null) {
+    	if (query != null && !query.trim().equals("")) {
+    		return query;
+    	} else if (parameters == null) {
             return "";
         } else {
             StringBuilder sb = new StringBuilder("?");
@@ -68,5 +71,9 @@ public class ActionResponse {
             }
             return sb.toString();
         }
+    }
+    
+    public void setParameterString(String query) {
+    	this.query = query;
     }
 }
